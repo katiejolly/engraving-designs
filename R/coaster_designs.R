@@ -5,6 +5,7 @@ library(sf)
 options(tigris_use_cache = TRUE)
 options(tigris_class = "sf")
 
+##################################################### mclean roads
 
 # metro_streets <- function(metro_name) {
 #   
@@ -86,3 +87,28 @@ ggplot(cropped_mcl_roads) +
 
 
 # ggsave("svg/mclean_roads.svg")
+
+
+########################################################################## regional parks
+
+regional_parks <- st_read("data/plan_parks_regional.gpkg")
+
+ggplot() +
+  geom_sf(data = regional_parks %>% group_by(COUNTY_ID, PARKNAME) %>% count(), fill = "#7EB2AF", color = NA) +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+# ggsave("svg/regional_parks.svg")
+
+
+########################################################################### water mn
+
+
+water_lakes_rivers <- st_read("data/water_lakes_rivers.gpkg")
+
+ggplot() +
+  geom_sf(data = water_lakes_rivers, fill = "#1B4965", color = NA) +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+# ggsave("svg/water_lakes_rivers.svg")

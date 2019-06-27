@@ -6,48 +6,48 @@ options(tigris_use_cache = TRUE)
 options(tigris_class = "sf")
 
 
-metro_streets <- function(metro_name) {
-  
-  # First, identify which states intersect the metro area using the
-  # `states` function in tigris
-  st <- states(cb = TRUE)
-  cb <- core_based_statistical_areas(cb = TRUE)
-  metro <- filter(cb, grepl(metro_name, NAME))
-  
-  stcodes <- st[metro,]$STATEFP
-  
-  # Then, fetch the tracts, using rbind_tigris if there is more
-  # than one state
-  if (length(stcodes) > 1) {
-    tr <- rbind_tigris(
-      map(stcodes, function(x) {
-        primary_secondary_roads(x)
-      })
-    )
-  } else {
-    tr <- primary_secondary_roads(x)
-  }
-  
-  # Now, find out which primary_secondary_roads are within the metro area
-  within <- st_within(tr, metro)
-  
-  within_lgl <- map_lgl(within, function(x) {
-    if (length(x) == 1) {
-      return(TRUE)
-    } else {
-      return(FALSE)
-    }
-  })
-  
-  # Finally, subset and return the output
-  output <- tr[within_lgl,]
-  
-  return(output)
-  
-}
-
-
-msp_streets <- metro_streets("Minneapolis")
+# metro_streets <- function(metro_name) {
+#   
+#   # First, identify which states intersect the metro area using the
+#   # `states` function in tigris
+#   st <- states(cb = TRUE)
+#   cb <- core_based_statistical_areas(cb = TRUE)
+#   metro <- filter(cb, grepl(metro_name, NAME))
+#   
+#   stcodes <- st[metro,]$STATEFP
+#   
+#   # Then, fetch the tracts, using rbind_tigris if there is more
+#   # than one state
+#   if (length(stcodes) > 1) {
+#     tr <- rbind_tigris(
+#       map(stcodes, function(x) {
+#         roads(x)
+#       })
+#     )
+#   } else {
+#     tr <- roads(x)
+#   }
+#   
+#   # Now, find out which primary_secondary_roads are within the metro area
+#   within <- st_within(tr, metro)
+#   
+#   within_lgl <- map_lgl(within, function(x) {
+#     if (length(x) == 1) {
+#       return(TRUE)
+#     } else {
+#       return(FALSE)
+#     }
+#   })
+#   
+#   # Finally, subset and return the output
+#   output <- tr[within_lgl,]
+#   
+#   return(output)
+#   
+# }
+# 
+# 
+# msp_streets <- metro_streets("Minneapolis")
 
 
 
@@ -62,3 +62,27 @@ ffx_roads <- roads(state = "VA", county = "Fairfax County") %>%
 
 
 mcl_roads <- st_crop(ffx_roads, st_bbox(mclean))
+
+mcl_point <- st_point(c(830158.2, 4315754)) %>%
+  st_sfc(crs = 26917)
+
+
+ggplot() +
+  geom_sf(data = mcl_roads, color = "gray80") +
+  geom_sf(data = mcl_point, color = "#D8973C") + 
+  geom_sf(data = st_buffer(mcl_point, 3000),
+          color = "#e83778", fill = NA) +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+cropped_mcl_roads <- st_intersection(mcl_roads, st_buffer(mcl_point, 4000))
+
+
+ggplot(cropped_mcl_roads) +
+  geom_sf(color = "#515b72")  +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+
+
+# ggsave("svg/mclean_roads.svg")

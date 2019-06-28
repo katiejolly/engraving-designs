@@ -64,19 +64,19 @@ ffx_roads <- roads(state = "VA", county = "Fairfax County") %>%
 
 mcl_roads <- st_crop(ffx_roads, st_bbox(mclean))
 
-mcl_point <- st_point(c(830158.2, 4315754)) %>%
+mcl_point <- st_point(c(832758.2, 4315754)) %>%
   st_sfc(crs = 26917)
 
 
 ggplot() +
   geom_sf(data = mcl_roads, color = "gray80") +
   geom_sf(data = mcl_point, color = "#D8973C") + 
-  geom_sf(data = st_buffer(mcl_point, 3000),
+  geom_sf(data = st_buffer(mcl_point, 800),
           color = "#e83778", fill = NA) +
   theme_void() +
   theme(panel.grid.major = element_line("transparent"))
 
-cropped_mcl_roads <- st_intersection(mcl_roads, st_buffer(mcl_point, 4000))
+cropped_mcl_roads <- st_intersection(mcl_roads, st_buffer(mcl_point, 550))
 
 
 ggplot(cropped_mcl_roads) +
@@ -85,8 +85,7 @@ ggplot(cropped_mcl_roads) +
   theme(panel.grid.major = element_line("transparent"))
 
 
-
-# ggsave("svg/mclean_roads.svg")
+# ggsave("svg/brookhaven.svg")
 
 
 ########################################################################## regional parks
@@ -107,8 +106,8 @@ ggplot() +
 water_lakes_rivers <- st_read("data/water_lakes_rivers.gpkg")
 
 ggplot() +
-  geom_sf(data = water_lakes_rivers, fill = "#1B4965", color = NA) +
+  geom_sf(data = water_lakes_rivers %>% filter(NAME_DNR == "Mississippi"), fill = "#1B4965", color = NA) +
   theme_void() +
   theme(panel.grid.major = element_line("transparent"))
 
-# ggsave("svg/water_lakes_rivers.svg")
+# ggsave("svg/mississippi_river.svg")

@@ -111,3 +111,35 @@ ggplot() +
   theme(panel.grid.major = element_line("transparent"))
 
 # ggsave("svg/mississippi_river.svg")
+
+
+
+########################################## bike rte fairfax cnty
+
+bike_ffx <- st_read("https://opendata.arcgis.com/datasets/0dacd6f1e697469a81d6f7292a78d30e_16.geojson")
+
+bike_fc <- st_read("https://opendata.arcgis.com/datasets/42b3063a47f04fee9385b88b86b00791_1.geojson")
+
+wod <- bike_fc %>% filter(Name == "W&OD Trail")
+
+ggplot(wod) +
+  geom_sf(color = "#D05353") +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+
+
+################################ pimmit
+
+water_ffx <- st_read("https://opendata.arcgis.com/datasets/2ffa8ec68ffb4f46a9bc9e471c012783_4.geojson")
+
+
+pimmit <- water_ffx %>%
+  filter(grepl("Pimmit", NAME, ignore.case = TRUE))
+
+ggplot() +
+  geom_sf(data = pimmit, color = "#1B4965") +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+# ggsave("svg/pimmit.svg")

@@ -143,3 +143,192 @@ ggplot() +
   theme(panel.grid.major = element_line("transparent"))
 
 # ggsave("svg/pimmit.svg")
+
+
+
+############################# saint paul
+
+mn_places <- places(state = "mn")
+
+stp <- mn_places %>%
+  filter(NAME == "St. Paul") %>%
+  st_transform(26915)
+
+
+ramsey_roads <- roads(state = "MN", county = "Ramsey") %>%
+  st_transform(26915)
+
+stp_roads <- st_crop(ramsey_roads, st_bbox(stp))
+
+stp_point <- st_point(c(486577.3, 4976493)) %>%
+  st_sfc(crs = 26915)
+
+ggplot() +
+  geom_sf(data = stp_roads, color = "gray80") +
+  geom_sf(data = stp_point, color = "#D8973C") + 
+  geom_sf(data = st_buffer(stp_point, 1000),
+          color = "#e83778", fill = NA) +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+cropped_stp_roads <- st_intersection(stp_roads, st_buffer(stp_point, 1000))
+
+
+ggplot(cropped_stp_roads) +
+  geom_sf(color = "#515b72")  +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+# ggsave("svg/mac_grove.svg")
+
+
+################################################### seattle
+
+sea <- places(state = "WA") %>%
+  filter(NAME == "Seattle") %>%
+  st_transform(26910)
+
+
+king_roads <- roads(state = "WA", county = "King") %>%
+  st_transform(26910)
+
+sea_roads <- st_crop(king_roads, st_bbox(sea))
+
+
+sea_point <- st_point(c(549102.8, 5273366)) %>%
+  st_sfc(crs = 26910)
+
+ggplot() +
+  geom_sf(data = sea_roads %>% sample_frac(.5), color = "gray80") +
+  geom_sf(data = sea_point, color = "#D8973C") + 
+  geom_sf(data = st_buffer(sea_point, 1000),
+          color = "#e83778", fill = NA) +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+
+cropped_sea_roads <- st_intersection(sea_roads, st_buffer(sea_point, 1000))
+
+
+ggplot(cropped_sea_roads) +
+  geom_sf(color = "#515b72")  +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+
+ggsave("svg/belltown.svg")
+
+
+
+############################## tufts
+
+
+somerville <- places(state = "MA") %>%
+  filter(NAME %in% c("Somerville")) %>%
+  st_transform(26918)
+
+
+
+
+som_roads <- roads(state = "MA", county = "Middlesex") %>%
+  st_transform(26918) %>%
+  st_crop(., st_bbox(somerville))
+
+som_point <- st_point(c(819007.3, 4701228)) %>%
+  st_sfc(crs = 26918)
+
+ggplot() +
+  geom_sf(data = som_roads, color = "gray80") +
+  geom_sf(data = som_point, color = "#D8973C") + 
+  geom_sf(data = st_buffer(som_point, 650),
+          color = "#e83778", fill = NA) +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+cropped_som_roads <- st_intersection(som_roads, st_buffer(som_point, 650))
+
+
+ggplot(cropped_som_roads) +
+  geom_sf(color = "#515b72")  +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+# ggsave("svg/davis.svg")
+
+
+
+######################################### tacoma
+
+tacoma <- places("WA") %>%
+  filter(NAME == "Tacoma") %>%
+  st_transform(26910)
+
+tac_roads <- roads(state = "WA", county = "Pierce") %>%
+  st_transform(26910) %>%
+  st_crop(., st_bbox(tacoma))
+
+
+tac_point <- st_point(c(540886.7, 5234989)) %>%
+  st_sfc(crs = 26910)
+
+ggplot() +
+  geom_sf(data = tac_roads %>% sample_frac(.7), color = "gray80") +
+  geom_sf(data = tac_point, color = "#D8973C") + 
+  geom_sf(data = st_buffer(tac_point, 1000),
+          color = "#e83778", fill = NA) +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+cropped_tac_roads <- st_intersection(tac_roads, st_buffer(tac_point, 1000))
+
+
+ggplot(cropped_tac_roads) +
+  geom_sf(color = "#515b72")  +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+# ggsave("svg/wedge.svg")
+
+
+########################### short north
+
+cbus <- places(state = "OH") %>%
+  filter(NAME == "Columbus") %>%
+  st_transform(26917)
+
+cbus_roads <- roads(state = "OH", county = "Franklin") %>%
+  st_transform(26917) %>%
+  st_crop(., st_bbox(cbus))
+
+cbus_point <- st_centroid(st_union(cbus))
+
+cbus_crop <- cbus_roads %>% st_crop(., st_buffer(cbus_point, 3500))
+
+
+ggplot() +
+  geom_sf(data = cbus_crop, color = "gray80") +
+  geom_sf(data = cbus_point, color = "#D8973C") + 
+  geom_sf(data = st_buffer(cbus_point, 1000),
+          color = "#e83778", fill = NA) +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+cbus_point <- st_point(c(328516.1, 4427810)) %>%
+  st_sfc(crs = 26917)
+
+ggplot() +
+  geom_sf(data = cbus_crop, color = "gray80") +
+  geom_sf(data = cbus_point, color = "#D8973C") + 
+  geom_sf(data = st_buffer(cbus_point, 1000),
+          color = "#e83778", fill = NA) +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+cropped_cbus_roads <- cbus_crop %>% st_intersection(st_buffer(cbus_point, 1000))
+
+ggplot(cropped_cbus_roads) +
+  geom_sf(color = "#515b72")  +
+  theme_void() +
+  theme(panel.grid.major = element_line("transparent"))
+
+# ggsave("svg/columbus.svg")
